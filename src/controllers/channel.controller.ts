@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/channel.service';
+import * as ChannelService from '../services/channel.service';
 import { channelSchema, memberActionSchema } from '../validators/channel.validator';
 
 export const createChannel = async (req: Request, res: Response): Promise<void> => {
@@ -19,15 +20,15 @@ export const createChannel = async (req: Request, res: Response): Promise<void> 
     }
 };
 
-export const getChannels = async (_req: Request, res: Response): Promise<void> => {
+export const getAllChannels = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const channels = await service.findAll();
+        const paginationResult = await ChannelService.getAllChannels(req.query);
         res.status(200).json({
-            message: 'Channels retrieved successfully',
-            data: channels,
+            status: 'success',
+            ...paginationResult,
         });
-    } catch (err: any) {
-        res.status(400).json({ error: err.message });
+    } catch (error) {
+        next(error);
     }
 };
 

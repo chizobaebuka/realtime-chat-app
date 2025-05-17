@@ -1,8 +1,9 @@
 // src/services/message.service.ts
 import * as MessageRepo from '../repositories/message.repo';
 import { IMessage } from '../models/message.model';
-import { getPagination } from '../utils/pagination';
+import { paginate, PaginationResult } from '../utils/pagination';
 import mongoose from 'mongoose';
+import { MessageModel } from '../models/message.model';
 
 export const createMessage = async (data: Partial<IMessage>): Promise<IMessage> => {
     // Ensure all ObjectId fields are properly formatted
@@ -19,9 +20,9 @@ export const createMessage = async (data: Partial<IMessage>): Promise<IMessage> 
     return await MessageRepo.saveMessage(data);
 };
 
-export const getMessagesInRoom = async (roomId: string, query: any): Promise<IMessage[]> => {
-    const { limit, skip } = getPagination(query);
-    return await MessageRepo.getMessagesByRoomWithPagination(roomId, limit, skip);
+export const getMessagesInRoom = async (roomId: string, query: any): Promise<PaginationResult<IMessage>> => {
+    const filter = { roomId };
+    return await paginate<IMessage>(MessageModel, query, filter);
 };
 
 export const getUserMessages = async (userId: string, limit = 20, skip = 0): Promise<IMessage[]> => {

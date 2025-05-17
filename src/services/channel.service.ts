@@ -1,6 +1,8 @@
 import { IChannel } from '../models/channel';
 import * as repo from '../repositories/channel.repo';
 import { Types } from 'mongoose';
+import { paginate, PaginationResult } from '../utils/pagination';
+import { ChannelModel } from '../models/channel';
 
 export const create = (data: Partial<IChannel>): Promise<IChannel> => {
     return repo.createChannel({
@@ -18,3 +20,7 @@ export const addMember = (channelId: string, userId: string): Promise<IChannel |
 export const removeMember = (channelId: string, userId: string): Promise<IChannel | null> => repo.removeMemberFromChannel(channelId, userId);
 export const promoteModerator = (channelId: string, userId: string): Promise<IChannel | null> => repo.assignModerator(channelId, userId);
 export const demoteModerator = (channelId: string, userId: string): Promise<IChannel | null> => repo.revokeModerator(channelId, userId);
+
+export const getAllChannels = async (query: any): Promise<PaginationResult<IChannel>> => {
+    return await paginate<IChannel>(ChannelModel, query);
+};

@@ -53,14 +53,12 @@ export const sendMessage = (io: Server) => async (req: Request, res: Response, n
 
 export const getMessagesInRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { roomId } = req.params;
-        const query = messageQuerySchema.parse(req.query);
-        const messages = await MessageService.getMessagesInRoom(roomId, query);
+        const { id: roomId } = req.params;
+        const paginationResult = await MessageService.getMessagesInRoom(roomId, req.query);
         res.status(200).json({
             status: 'success',
-            message: 'Messages retrieved successfully',
-            data: messages,
-        })
+            ...paginationResult,
+        });
     } catch (error) {
         next(error);
     }
