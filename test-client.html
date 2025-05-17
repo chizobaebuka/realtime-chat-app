@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Socket.IO Test Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body>
+    <h2>Socket.IO Test Client</h2>
+
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="sendMessage()">Send Message</button>
+    <button onclick="startTyping()">Typing...</button>
+    <button onclick="stopTyping()">Stop Typing</button>
+
+    <script>
+        const socket = io("http://localhost:4401");
+
+        socket.on("connect", () => {
+            console.log("🟢 Connected:", socket.id);
+        });
+
+        socket.on("receiveMessage", (data) => {
+            console.log("📩 Message received:", data);
+        });
+
+        socket.on("userJoined", (data) => {
+            console.log("👥 User joined:", data.socketId);
+        });
+
+        socket.on("userTyping", (data) => {
+            console.log("✍️ User typing:", data.socketId);
+        });
+
+        socket.on("userStopTyping", (data) => {
+            console.log("🛑 User stopped typing:", data.socketId);
+        });
+
+        function joinRoom() {
+            socket.emit("joinRoom", "room-123");
+        }
+
+        function sendMessage() {
+            socket.emit("sendMessage", {
+                roomId: "room-123",
+                sender: "test-user",
+                message: "Hello from browser!"
+            });
+        }
+
+        function startTyping() {
+            socket.emit("typing", "room-123");
+        }
+
+        function stopTyping() {
+            socket.emit("stopTyping", "room-123");
+        }
+    </script>
+</body>
+
+</html>
